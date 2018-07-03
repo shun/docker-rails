@@ -1,0 +1,14 @@
+version: "2"
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+    command: bundle exec unicorn -p 3000 -c /app/config/unicorn.rb
+    ports:
+      - 3000:3000
+    volumes:
+      - ./pjms:/pjms
+    environment:
+      - TZ=Asia/Tokyo
