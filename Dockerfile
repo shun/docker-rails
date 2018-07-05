@@ -1,32 +1,25 @@
-FROM ruby:2.5
+FROM ubuntu:16.04
 
-ARG http_proxy=http://172.28.11.159:3128
-ARG https_proxy=http://172.28.11.159:3128
+ENV RUBY_VERSION=2.3 \
+    RAILS_VERSION=5.1.6 \
+    RAILS_ENV=production
 
-ADD apt.conf /etc/apt/apt.conf
+RUN mkdir /opt/scripts
+COPY install.sh /opt/scripts/install.sh
 
-RUN adduser --disabled-login --gecos 'rails' rails
-RUN apt update && apt upgrade -y && apt autoremove -y
+RUN bash /opt/scripts/install.sh
 
-RUN apt install -y \
-        curl \
-        vim \
-        wget \
-        build-essential
+RUN mkdir /app
+WORKDIR /app
+RUN gem install bundle
+RUN gem install rails -v 5.1.6
 
-RUN curl -sL https://deb.nodesource.com/setup_10.x | bash -
-RUN apt install -y nodejs
-
-RUN node -v
-RUN npm cache clean --force
-RUN npm install n -g
-
-RUN n stable
-RUN ln -sf /usr/local/bin/node /usr/bin/node
-
-RUN mkdir /pjms
-WORKDIR /pjms
-ADD ./Gemfile /pjms/Gemfile
-RUN touch /pjms/Gemfile.lock
-
-RUN bundle install
+#RUN mkdir /pjms
+#WORKDIR /pjms
+#ADD ./Gemfile /pjms/Gemfile
+#RUN touch /pjms/Gemfile.lock
+#
+#RUN bundle install
+#ADD ./entrypoint.sh /entrypoint.sh
+#RUN chmod a+x /entrypoint.sh
+#
